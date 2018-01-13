@@ -11,18 +11,25 @@ class Place(graphene.ObjectType):
     name = graphene.String()
     address = graphene.String()
     place_id = graphene.String()
-    rating = graphene.Float() # change this
+    rating = graphene.Float()
     id = graphene.String()
-    lat = graphene.Float() # change this
+    lat = graphene.Float()
     lng = graphene.Float()
 
 
 class Query(graphene.ObjectType):
     place = graphene.Field(Place)
+    places = graphene.List(Place)
 
     def resolve_place(self, info, **args):
-        place = get_places('42.2706837,-83.74087019999999')[0]
-        return Place(**place)
+        this_place = get_places('42.2706837,-83.74087019999999')[0]
+        new_place = Place(**this_place)
+        return new_place
+
+    def resolve_places(self, info, **args):
+        these_places = get_places('42.2706837,-83.74087019999999')
+        new_places = [Place(**params) for params in these_places]
+        return new_places
 
 schema = graphene.Schema(query=Query)
 
