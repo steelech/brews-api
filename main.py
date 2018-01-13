@@ -15,11 +15,11 @@ class Place(graphene.ObjectType):
     id = graphene.String()
     lat = graphene.Float()
     lng = graphene.Float()
-
+    location = graphene.String()
 
 class Query(graphene.ObjectType):
     place = graphene.Field(Place)
-    places = graphene.List(Place)
+    places = graphene.List(Place, location=graphene.String())
 
     def resolve_place(self, info, **args):
         this_place = get_places('42.2706837,-83.74087019999999')[0]
@@ -27,7 +27,7 @@ class Query(graphene.ObjectType):
         return new_place
 
     def resolve_places(self, info, **args):
-        these_places = get_places('42.2706837,-83.74087019999999')
+        these_places = get_places(location=args['location'])
         new_places = [Place(**params) for params in these_places]
         return new_places
 
@@ -36,14 +36,14 @@ schema = graphene.Schema(query=Query)
 app.add_url_rule(
     '/graphiql',
     view_func=GraphQLView.as_view(
-        'graphql',
+        'graphiql',
         schema=schema,
         graphiql=True # for having the GraphiQL interface
     )
 )
 
 @app.route('/graphql', methods=['POST'])
-def hello():
+def graphql():
     data = json.loads(request.data)
     result = schema.execute(data["query"]).data
     return jsonify(result)

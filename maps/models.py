@@ -17,4 +17,5 @@ class Place(object):
             'id': self.id,
             'lat': self.lat,
             'lng': self.lng,
+            'location': '{},{}'.format(self.lat, self.lng)
         }
