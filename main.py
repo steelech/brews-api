@@ -1,25 +1,45 @@
 import graphene
 import json
-from flask import Flask, request
+from flask_graphql import GraphQLView
+from flask import Flask, request, jsonify
+import pdb
+from maps.maps import get_places
+
 app = Flask(__name__)
 
-class Query(graphene.ObjectType):
-    hello = graphene.String(name=graphene.String(default_value="stranger"), age=graphene.Int())
+class Place(graphene.ObjectType):
+    name = graphene.String()
+    address = graphene.String()
+    place_id = graphene.String()
+    rating = graphene.Float() # change this
+    id = graphene.String()
+    lat = graphene.Float() # change this
+    lng = graphene.Float()
 
-    def resolve_hello(self, info, name, age):
-        return 'hello, my name is {} and I am {} years old'.format(name, age)
+
+class Query(graphene.ObjectType):
+    place = graphene.Field(Place)
+
+    def resolve_place(self, info, **args):
+        place = get_places('42.2706837,-83.74087019999999')[0]
+        return Place(**place)
 
 schema = graphene.Schema(query=Query)
 
+app.add_url_rule(
+    '/graphiql',
+    view_func=GraphQLView.as_view(
+        'graphql',
+        schema=schema,
+        graphiql=True # for having the GraphiQL interface
+    )
+)
 
-@app.route('/', methods=['POST'])
+@app.route('/graphql', methods=['POST'])
 def hello():
-    # result = schema.execute('{ hello(name: "charlie", age:21) }')
     data = json.loads(request.data)
     result = schema.execute(data["query"]).data
-    return json.dumps(result)
+    return jsonify(result)
 
 if __name__ == '__main__':
     app.run()
-
-# print(result.data['hello']) # "Hello stranger"
