@@ -3,7 +3,7 @@ class Place(object):
         self.name = response['name']
         self.address = response['formatted_address']
         self.place_id = response['place_id']
-        self.rating = response['rating']
+        self.rating = response.get('rating', None)
         self.id = response['id']
         self.lat = response['geometry']['location']['lat']
         self.lng = response['geometry']['location']['lng']

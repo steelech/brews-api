@@ -11,8 +11,7 @@ def build_query(location, radius=10000):
     return 'query=brewery,beer&location={}&radius={}&key={}'.format(location, radius, PLACES_KEY)
 
 def get_places(location):
-    print('getting places')
-    response = requests.get('{}{}'.format(BASE_URL, build_query(location, 10000)))
+    response = requests.get('{}{}'.format(BASE_URL, build_query(location, 50000)))
     results = response.json()['results']
     places = [Place(result).to_json() for result in results]
     return places
