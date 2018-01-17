@@ -1,7 +1,5 @@
-bin/
-lib/
-include/
-.Python
-pip-selfcheck.json
+venv/
 .env
 **/__pycache__/
+.Python
+**.pyc
