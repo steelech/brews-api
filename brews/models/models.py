@@ -24,7 +24,7 @@ class Brewery(db.Model):
     longitude = db.Column(db.Float, nullable=False)
 
     def __init__(self, **kwargs):
-        self.name = kwargs.get('name', '')
+        self.name = kwargs['brewery']['name']
         self.street_address = kwargs.get('streetAddress', '')
         self.locality = kwargs.get('locality', '')
         self.region = kwargs.get('region', '')
