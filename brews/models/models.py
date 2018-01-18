@@ -33,3 +33,16 @@ class Brewery(db.Model):
         self.website = kwargs.get('website', '')
         self.latitude = kwargs.get('latitude', None)
         self.longitude = kwargs.get('longitude', None)
+
+    def to_json(self):
+        return {
+            'name': self.name,
+            'street_address': self.street_address,
+            'locality': self.locality,
+            'region': self.region,
+            'postal_code': self.postal_code,
+            'phone': self.phone,
+            'website': self.website,
+            'latitude': self.latitude,
+            'longitude': self.longitude
+        }
