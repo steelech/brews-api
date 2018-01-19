@@ -1,6 +1,7 @@
 import graphene
 from brews.lib.maps.maps import get_places
-from brews.lib.breweries.breweries import get_breweries
+from brews.models.models import Breweries
+import pdb
 
 class Place(graphene.ObjectType):
     name = graphene.String()
@@ -15,7 +16,7 @@ class Place(graphene.ObjectType):
 class Hello(graphene.ObjectType):
     message = graphene.String()
 
-class Brewery(graphene.ObjectType):
+class BreweryType(graphene.ObjectType):
     name = graphene.String()
     street_address = graphene.String()
     locality = graphene.String()
@@ -29,7 +30,7 @@ class Brewery(graphene.ObjectType):
 class Query(graphene.ObjectType):
     places = graphene.List(Place, location=graphene.String(default_value='42.2808,-83.7430'))
     hello = graphene.Field(Hello)
-    breweries = graphene.List(Brewery)
+    breweries = graphene.List(BreweryType, location=graphene.String(default_value='42.2808,-83.7430'), radius=graphene.Float(default_value=20.0))
 
     def resolve_places(self, info, **args):
         these_places = get_places(location=args['location'])
@@ -41,8 +42,8 @@ class Query(graphene.ObjectType):
         return my_hello
 
     def resolve_breweries(self, info, **args):
-        these_breweries = get_breweries()
-        new_breweries = [Brewery(**brewery.to_json()) for brewery in these_breweries]
+        these_breweries = Breweries.get_by_location(location=args['location'], radius=args['radius'])
+        new_breweries = [BreweryType(**brewery.to_json()) for brewery in these_breweries]
         return new_breweries
 
 

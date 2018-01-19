@@ -1,4 +1,5 @@
 from brews.extensions import db
+from geopy.distance import vincenty
 import pdb
 
 class User(db.Model):
@@ -46,3 +47,24 @@ class Brewery(db.Model):
             'latitude': self.latitude,
             'longitude': self.longitude
         }
+
+def get_distance(location_string, latitude, longitude):
+    start = (latitude, longitude)
+    end = (location_string.split(',')[0], location_string.split(',')[1])
+    distance = vincenty(start, end).miles
+    return distance
+
+class Breweries(object):
+    @classmethod
+    def get_all(self):
+        return Brewery.query.all()
+
+    @classmethod
+    def get_by_location(self, location, radius=20):
+        close_breweries = []
+        all_breweries = Brewery.query.all()
+        for brewery in all_breweries:
+            distance = get_distance(location, brewery.latitude, brewery.longitude)
+            if distance < radius:
+                close_breweries.append(brewery)
+        return close_breweries
