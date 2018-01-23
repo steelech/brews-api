@@ -23,6 +23,7 @@ class Brewery(db.Model):
     website = db.Column(db.String(120), nullable=False)
     latitude = db.Column(db.Float, nullable=False)
     longitude = db.Column(db.Float, nullable=False)
+    is_closed = db.Column(db.String(20))
 
     def __init__(self, **kwargs):
         self.name = kwargs['brewery']['name']
@@ -34,6 +35,8 @@ class Brewery(db.Model):
         self.website = kwargs.get('website', '')
         self.latitude = kwargs.get('latitude', None)
         self.longitude = kwargs.get('longitude', None)
+        self.is_closed = kwargs.get('isClosed', None)
+        self.distance = None
 
     def to_json(self):
         return {
@@ -45,14 +48,16 @@ class Brewery(db.Model):
             'phone': self.phone,
             'website': self.website,
             'latitude': self.latitude,
-            'longitude': self.longitude
+            'longitude': self.longitude,
+            'is_closed': self.is_closed,
+            'distance': self.distance
         }
 
-def get_distance(location_string, latitude, longitude):
-    start = (latitude, longitude)
-    end = (location_string.split(',')[0], location_string.split(',')[1])
-    distance = vincenty(start, end).miles
-    return distance
+    def get_distance(self, location_string, latitude, longitude):
+        start = (latitude, longitude)
+        end = (location_string.split(',')[0], location_string.split(',')[1])
+        self.distance = vincenty(start, end).miles
+
 
 class Breweries(object):
     @classmethod
@@ -64,7 +69,7 @@ class Breweries(object):
         close_breweries = []
         all_breweries = Brewery.query.all()
         for brewery in all_breweries:
-            distance = get_distance(location, brewery.latitude, brewery.longitude)
-            if distance < radius:
+            brewery.get_distance(location, brewery.latitude, brewery.longitude)
+            if brewery.distance < radius and brewery.is_closed == 'N':
                 close_breweries.append(brewery)
         return close_breweries

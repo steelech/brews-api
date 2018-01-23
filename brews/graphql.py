@@ -26,11 +26,13 @@ class BreweryType(graphene.ObjectType):
     website = graphene.String()
     latitude = graphene.Float()
     longitude = graphene.Float()
+    distance = graphene.Float()
+    is_closed = graphene.String()
 
 class Query(graphene.ObjectType):
     places = graphene.List(Place, location=graphene.String(default_value='42.2808,-83.7430'))
     hello = graphene.Field(Hello)
-    breweries = graphene.List(BreweryType, location=graphene.String(default_value='42.2808,-83.7430'), radius=graphene.Float(default_value=20.0))
+    breweries = graphene.List(BreweryType, location=graphene.String(), radius=graphene.Float())
 
     def resolve_places(self, info, **args):
         these_places = get_places(location=args['location'])
