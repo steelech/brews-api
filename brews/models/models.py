@@ -24,6 +24,8 @@ class Brewery(db.Model):
     latitude = db.Column(db.Float, nullable=False)
     longitude = db.Column(db.Float, nullable=False)
     is_closed = db.Column(db.String(20))
+    rating = db.Column(db.Float)
+    formatted_address = db.Column(db.String(120))
 
     def __init__(self, **kwargs):
         self.name = kwargs['brewery']['name']
@@ -36,10 +38,14 @@ class Brewery(db.Model):
         self.latitude = kwargs.get('latitude', None)
         self.longitude = kwargs.get('longitude', None)
         self.is_closed = kwargs.get('isClosed', None)
+        self.rating = kwargs.get('rating', 0.0)
+        self.formatted_address = kwargs.get('formatted_address', '')
+        # self.google_places = kwargs.get('google_places', None)
         self.distance = None
 
     def to_json(self):
         return {
+            'id': self.id,
             'name': self.name,
             'street_address': self.street_address,
             'locality': self.locality,
@@ -50,7 +56,9 @@ class Brewery(db.Model):
             'latitude': self.latitude,
             'longitude': self.longitude,
             'is_closed': self.is_closed,
-            'distance': self.distance
+            'distance': self.distance,
+            'formatted_address': self.formatted_address,
+            'rating': self.rating
         }
 
     def get_distance(self, location_string, latitude, longitude):

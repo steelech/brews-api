@@ -17,6 +17,8 @@ class Hello(graphene.ObjectType):
     message = graphene.String()
 
 class BreweryType(graphene.ObjectType):
+    # formatted_address, rating, name, latitude, longitude
+    id = graphene.Int()
     name = graphene.String()
     street_address = graphene.String()
     locality = graphene.String()
@@ -28,6 +30,11 @@ class BreweryType(graphene.ObjectType):
     longitude = graphene.Float()
     distance = graphene.Float()
     is_closed = graphene.String()
+    formatted_address = graphene.String()
+    rating = graphene.Float()
+    # google_places = graphene.types.json.JSONString()
+    rating = graphene.Float()
+
 
 class Query(graphene.ObjectType):
     places = graphene.List(Place, location=graphene.String(default_value='42.2808,-83.7430'))
