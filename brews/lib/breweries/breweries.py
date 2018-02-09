@@ -16,7 +16,7 @@ def nearby_search(brewery, radius):
 
 
 def get_page(page_num):
-    response = requests.get('{}?key={}&region=Michigan&p={}'.format(BASE_URL, BREWERYDB_KEY, page_num)).json()
+    response = requests.get('{}?key={}&region=Massachusetts&p={}'.format(BASE_URL, BREWERYDB_KEY, page_num)).json()
     return response
 
 def get_breweries():

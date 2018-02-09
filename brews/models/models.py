@@ -24,7 +24,7 @@ class Brewery(db.Model):
     latitude = db.Column(db.Float, nullable=False)
     longitude = db.Column(db.Float, nullable=False)
     is_closed = db.Column(db.String(20))
-    rating = db.Column(db.Float)
+    rating = db.Column(db.Float, nullable=False)
     formatted_address = db.Column(db.String(120))
 
     def __init__(self, **kwargs):
